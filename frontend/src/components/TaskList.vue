@@ -25,23 +25,23 @@
         <input
           type="checkbox"
           :checked="task.is_completed"
-          @change="toggleTask(task)"
+          @change="taskStore.toggleTask(task, authStore.token)"
           class="form-check-input"
         />
-        <span
-          :class="{ completed: task.is_completed }"
-          class="task-text"
-        >
+        <span :class="{ completed: task.is_completed }" class="task-text">
           {{ task.text }}
         </span>
         <button
-          @click="deleteTask(task.id)"
+          @click="taskStore.deleteTask(task.id, authStore.token)"
           class="btn btn-sm btn-danger ms-2"
         >
           Delete
         </button>
       </li>
     </ul>
+  </div>
+  <div v-if="taskStore.error" class="alert alert-danger mt-3">
+  {{ taskStore.error }}
   </div>
 </template>
 
@@ -62,18 +62,22 @@ onMounted(() => {
 
 const addTask = async () => {
   if (newTask.value.trim()) {
-    await taskStore.addTask(newTask.value.trim(), authStore.token)
-    newTask.value = ''
-  }
-}
-
-const toggleTask = (task) => {
-  taskStore.toggleTask(task, authStore.token)
-}
-
-const deleteTask = (id) => {
-  if (confirm('Are you sure you want to delete this task?')) {
-    taskStore.deleteTask(id, authStore.token)
+    await taskStore.addTask(newTask.value.trim(), authStore.token);
+    newTask.value = '';
   }
 }
 </script>
+
+<style>
+.completed {
+  text-decoration: line-through;
+  color: #6c757d;
+}
+.task-item {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+}
+</style>

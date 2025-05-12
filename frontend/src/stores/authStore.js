@@ -27,20 +27,34 @@ export const useAuthStore = defineStore('auth', () => {
   async function register(userData) {
     try {
       const response = await api.register(userData)
-      setToken(response.data.token)
-      return { success: true }
+      if (response.data.token) {
+        setToken(response.data.token)
+        return { success: true }
+      }
+      return { success: false, error: response.data }
     } catch (error) {
-      return { success: false, error: error.response.data }
+      console.error('Registration failed:', error)
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Ошибка сервера'
+      }
     }
   }
 
   async function login(userData) {
     try {
       const response = await api.login(userData)
-      setToken(response.data.token)
-      return { success: true }
+      if (response.data.token) {
+        setToken(response.data.token)
+        return { success: true }
+      }
+      return { success: false, error: response.data }
     } catch (error) {
-      return { success: false, error: error.response.data }
+      console.error('Login failed:', error)
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Ошибка сервера'
+      }
     }
   }
 

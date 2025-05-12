@@ -22,11 +22,23 @@ export const useTaskStore = defineStore('tasks', () => {
 
   async function addTask(text, token) {
     try {
-      const response = await api.addTask({ text }, token)
-      tasks.value.push(response.data)
-      return { success: true }
+      const taskData = {
+        text: text,
+        is_completed: false
+      };
+
+      console.log('Sending:', taskData); // Для отладки
+
+      const response = await api.addTask(taskData, token);
+
+      tasks.value.push(response.data);
+      return { success: true };
     } catch (err) {
-      return { success: false, error: err.response?.data }
+      console.error('Error details:', err.response?.data);
+      return {
+        success: false,
+        error: err.response?.data?.message || 'Ошибка добавления задачи'
+      };
     }
   }
 
@@ -47,11 +59,23 @@ export const useTaskStore = defineStore('tasks', () => {
 
   async function deleteTask(id, token) {
     try {
-      await api.deleteTask(id, token)
-      tasks.value = tasks.value.filter(task => task.id !== id)
-      return { success: true }
+      const response = await api.deleteTask(id, token);
+
+      if (response.data?.message === 'Task deleted') {
+        this.tasks = this.tasks.filter(task => task.id !== id);
+        return { success: true };
+      }
+
+      return {
+        success: false,
+        error: response.data?.error || 'Failed to delete task'
+      };
     } catch (err) {
-      return { success: false, error: err.response?.data }
+      console.error('Delete error:', err.response?.data);
+      return {
+        success: false,
+        error: err.response?.data?.error || 'Ошибка удаления задачи'
+      };
     }
   }
 

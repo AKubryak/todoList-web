@@ -12,10 +12,18 @@ const apiClient = axios.create({
 export default {
   // Auth methods
   register(user) {
-    return apiClient.post('/register', user)
+    return apiClient.post('/register', {
+      name: user.email.split('@')[0], // Генерируем имя из email
+      email: user.email,
+      password: user.password,
+      password_confirmation: user.password_confirmation
+    })
   },
   login(user) {
-    return apiClient.post('/login', user)
+    return apiClient.post('/login', {
+      email: user.email,
+      password: user.password
+    })
   },
 
   // Task methods
@@ -24,9 +32,12 @@ export default {
       headers: { Authorization: `Bearer ${token}` }
     })
   },
-  addTask(task, token) {
-    return apiClient.post('/tasks', task, {
-      headers: { Authorization: `Bearer ${token}` }
+  addTask(taskData, token) {
+    return apiClient.post('/tasks', taskData, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
     })
   },
   updateTask(id, task, token) {
