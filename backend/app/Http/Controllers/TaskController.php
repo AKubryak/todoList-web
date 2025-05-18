@@ -60,4 +60,26 @@ class TaskController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $task = Task::findOrFail($id);
+
+            if ($task->user_id != Auth::id()) {
+                return response()->json(['error' => 'Forbidden'], 403);
+            }
+
+            $validated = $request->validate([
+                'text' => 'sometimes|string|max:255',
+                'is_completed' => 'sometimes|boolean'
+            ]);
+
+            $task->update($validated);
+
+            return response()->json($task);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 }
