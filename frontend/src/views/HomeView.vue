@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-0">
       <h1>Todo List</h1>
       <button @click="logout" class="btn btn-danger">Logout</button>
     </div>

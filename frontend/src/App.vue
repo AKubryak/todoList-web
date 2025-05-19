@@ -9,24 +9,35 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background: linear-gradient(90deg, #ffffff, #cfd8f8, #ffffff);;
 }
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  color: #2c3e50;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  color: #2c3e50;
   min-height: 100vh;
+  padding: 2rem 1rem;
 }
 .app-container {
   background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
-  margin: 2rem;
-  width: 100%;
-  max-width: 800px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 2.5rem;
+  margin: 0 auto;
+  max-width: 75vw;
+  max-height: 90vh;
   overflow: hidden;
+}
+@media (max-width: 768px) {
+  #app {
+    padding: 1rem;
+    align-items: stretch;
+  }
+  .app-container {
+    padding: 1.5rem;
+    border-radius: 0;
+  }
 }
 </style>
