@@ -45,15 +45,22 @@
         {{ isLogin ? 'Войти' : 'Зарегистрироваться' }}
       </button>
     </form>
-    <p class="mt-3">
-      {{ isLogin ? "Ещё нет аккаунта?" : "Уже есть аккаунт?" }}
-      <router-link :to="isLogin ? '/register' : '/login'">
-        {{ isLogin ? 'Зарегистрироваться' : 'Войти' }}
-      </router-link>
-    </p>
-
+    <div class="container text-center">
+      <p class="mt-3">
+        {{ isLogin ? "Ещё нет аккаунта?" : "Уже есть аккаунт?" }}
+        <router-link :to="isLogin ? '/register' : '/login'">
+          {{ isLogin ? 'Зарегистрироваться' : 'Войти' }}
+        </router-link>
+      </p>
+    </div>
     <div v-if="error" class="alert alert-danger mt-3">
       {{ error }}
+    </div>
+    <hr class="my-4">
+    <div class="container text-center">
+      <p class="mb-0">
+        &copy; 2025 • Кубряк Алексей • TeachMeSkills
+      </p>
     </div>
   </div>
 </template>
