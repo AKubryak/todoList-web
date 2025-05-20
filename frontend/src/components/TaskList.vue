@@ -87,7 +87,7 @@ const newTask = ref('')
 
 const formatDate = (dateString) => {
   const date = new Date(dateString)
-  return date.toLocaleDateString('en-GB') // DD/MM/YYYY
+  return date.toLocaleDateString('en-GB') + ' ' + date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 }
 
 const statusClass = (isCompleted) => {
