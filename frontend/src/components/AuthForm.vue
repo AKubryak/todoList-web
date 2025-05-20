@@ -107,3 +107,10 @@ const handleSubmit = async () => {
   }
 }
 </script>
+
+<style scoped>
+  .auth-form {
+    width: 400px;
+    max-width: 100%;
+  }
+</style>
