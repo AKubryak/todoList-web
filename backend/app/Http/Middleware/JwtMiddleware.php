@@ -13,6 +13,7 @@ class JwtMiddleware
     public function handle($request, Closure $next)
     {
         try {
+            // проверяется токен
             $user = JWTAuth::parseToken()->authenticate();
             if (!$user) {
                 return response()->json(['error' => 'User not found'], 404);

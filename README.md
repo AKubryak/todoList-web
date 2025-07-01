@@ -62,7 +62,6 @@ npm run dev
 
 Фронтенд доступен: [http://localhost:5173](http://localhost:5173/)
 
-
 ### **2. Запуск через Docker**
 
 #### **Требования**
@@ -73,23 +72,46 @@ npm run dev
 
 **1. Клонируйте репозиторий**
 
-**2. Запустите контейнеры**
-
 ```
-docker-compose up -d
-```
-
-**3. Настройка Laravel**
-
-```
-docker exec -it <container-id-php> bash
-composer install
-cp .env.example .env
-php artisan key:generate
-php artisan migrate
+   git clone https://github.com/AKubryak/todoList-web.git
+   cd todoList-web
 ```
 
-**4. Доступ к приложению**
+**2. Настройте окружение**
+
+Создайте .env файл:
+
+```
+cp backend/.env.example backend/.env
+```
+
+**3. Запустите контейнеры**
+
+```
+docker-compose up -d --build
+```
+
+**4. Установите зависимости Laravel**
+
+```
+docker exec -it todo-app-php-1 composer install
+```
+
+**5. **Настройте приложение****
+
+Сгенерируйте ключ:
+
+```
+docker exec -it todo-app-php-1 php artisan key:generate
+```
+
+Запустите миграции:
+
+```
+docker exec -it todo-app-php-1 php artisan migrate
+```
+
+**6. Доступ к приложению**
 
 * **Бэкенд** : [http://localhost](http://localhost/)
 * **Фронтенд** : [http://localhost:5173](http://localhost:5173/)
