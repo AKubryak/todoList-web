@@ -44,9 +44,13 @@
               <tr v-for="(task, index) in taskStore.tasks" :key="task.id">
                 <td class="fw-bold">{{ index + 1 }}</td>
                 <td>
-                  <div :class="{ 'text-decoration-line-through': task.is_completed }">
+                  <div v-if="!task.editing" @dblclick="startEditing(task)"
+                    :class="{ 'text-decoration-line-through': task.is_completed }">
                     {{ task.text }}
                   </div>
+                  <input v-else v-model="task.editingText" @blur="saveEditing(task)" @keyup.enter="saveEditing(task)"
+                    @keyup.escape="cancelEditing(task)" class="form-control form-control-sm" type="text"
+                    ref="editInput">
                   <div class="text-muted small mt-1">
                     Created: {{ formatDate(task.created_at) }}
                   </div>
@@ -58,7 +62,7 @@
                 </td>
                 <td>
                   <div class="d-flex gap-2">
-                    <button @click="taskStore.deleteTask(task.id, authStore.token)" class="btn btn-sm btn-danger">
+                    <button @click="confirmDelete(task.id)" class="btn btn-sm btn-danger">
                       DELETE
                     </button>
                     <button @click="taskStore.toggleTask(task, authStore.token)" class="btn btn-sm"
@@ -77,13 +81,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { useTaskStore } from '@/stores/taskStore'
 import { useAuthStore } from '@/stores/authStore'
 
 const taskStore = useTaskStore()
 const authStore = useAuthStore()
 const newTask = ref('')
+const editInput = ref(null)
 
 const formatDate = (dateString) => {
   const date = new Date(dateString)
@@ -99,6 +104,39 @@ const fetchTasks = () => {
     taskStore.fetchTasks(authStore.token)
   }
 }
+// редактирование задачи (двойной клик)
+const startEditing = (task) => {
+  if (task.is_completed) return;
+  task.editing = true;
+  task.editingText = task.text;
+  nextTick(() => {
+    editInput.value?.focus();
+  });
+};
+
+const saveEditing = async (task) => {
+  if (task.editingText.trim() === '') return;
+
+  try {
+    await taskStore.updateTask(task.id, {
+      text: task.editingText.trim()
+    }, authStore.token);
+    task.text = task.editingText.trim();
+    task.editing = false;
+  } catch (error) {
+    console.error('Error updating task:', error);
+  }
+};
+
+const cancelEditing = (task) => {
+  task.editing = false;
+};
+
+const confirmDelete = (id) => {
+  if (confirm('Are you sure you want to delete this task?')) {
+    taskStore.deleteTask(id, authStore.token);
+  }
+};
 
 onMounted(fetchTasks)
 
@@ -119,19 +157,76 @@ const addTask = async () => {
   display: flex;
   flex-direction: column;
 }
+
 .table-responsive {
   max-height: 41vh;
   overflow-y: auto;
 }
+
 .table-hover tbody tr:hover {
   background-color: rgba(0, 0, 0, 0.02);
 }
+
 .text-decoration-line-through {
   text-decoration: line-through;
   opacity: 0.7;
 }
+
 .badge {
   font-size: 0.85em;
   padding: 0.5em 0.75em;
+}
+
+@media (max-width: 768px) {
+  .task-list {
+    min-width: 100%;
+    max-height: none;
+    padding: 0;
+  }
+
+  .card {
+    border-radius: 0;
+    border: none;
+  }
+
+  .card-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .table-responsive {
+    max-height: calc(100vh - 200px);
+  }
+
+  .btn {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .form-control-lg {
+    font-size: 1rem;
+    padding: 0.5rem 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .d-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .d-flex.gap-2 {
+    flex-direction: column;
+    gap: 0.5rem !important;
+  }
+
+  .badge {
+    font-size: 0.75em;
+    padding: 0.25em 0.5em;
+  }
 }
 </style>

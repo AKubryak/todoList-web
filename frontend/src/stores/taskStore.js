@@ -27,10 +27,7 @@ export const useTaskStore = defineStore('tasks', () => {
         is_completed: false
       };
 
-      console.log('Sending:', taskData); // Для отладки
-
       const response = await api.addTask(taskData, token);
-
       tasks.value.push(response.data);
       return { success: true };
     } catch (err) {
@@ -57,19 +54,28 @@ export const useTaskStore = defineStore('tasks', () => {
     }
   }
 
-  async function deleteTask(id, token) {
+  // редактирование задачи (двойной клик)
+  async function updateTask(id, updates, token) {
     try {
-      const response = await api.deleteTask(id, token);
-
-      if (response.data?.message === 'Task deleted') {
-        this.tasks = this.tasks.filter(task => task.id !== id);
-        return { success: true };
+      await api.updateTask(id, updates, token);
+      const index = tasks.value.findIndex(t => t.id === id);
+      if (index !== -1) {
+        tasks.value[index] = { ...tasks.value[index], ...updates };
       }
-
+      return { success: true };
+    } catch (err) {
       return {
         success: false,
-        error: response.data?.error || 'Failed to delete task'
+        error: err.response?.data?.message || 'Ошибка обновления задачи'
       };
+    }
+  }
+
+  async function deleteTask(id, token) {
+    try {
+      await api.deleteTask(id, token);
+      tasks.value = tasks.value.filter(task => task.id !== id);
+      return { success: true };
     } catch (err) {
       console.error('Delete error:', err.response?.data);
       return {
@@ -86,6 +92,7 @@ export const useTaskStore = defineStore('tasks', () => {
     fetchTasks,
     addTask,
     toggleTask,
+    updateTask,
     deleteTask
   }
 })
