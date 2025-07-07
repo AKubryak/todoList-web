@@ -9,8 +9,9 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  background: linear-gradient(90deg, #ffffff, #cfd8f8, #ffffff);;
+  background: linear-gradient(90deg, #ffffff, #cfd8f8, #ffffff);
 }
+
 #app {
   display: flex;
   justify-content: center;
@@ -20,6 +21,7 @@ body {
   min-height: 100vh;
   padding: 2rem 1rem;
 }
+
 .app-container {
   background: white;
   border-radius: 12px;
@@ -29,15 +31,22 @@ body {
   max-width: 75vw;
   max-height: 90vh;
   overflow: hidden;
+  width: 100%;
 }
+
 @media (max-width: 768px) {
   #app {
-    padding: 1rem;
+    padding: 0;
     align-items: stretch;
   }
+
   .app-container {
-    padding: 1.5rem;
+    padding: 1rem;
     border-radius: 0;
+    max-width: 100%;
+    max-height: none;
+    min-height: 100vh;
+    box-shadow: none;
   }
 }
 </style>

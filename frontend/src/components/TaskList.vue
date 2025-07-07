@@ -69,6 +69,10 @@
                       :class="task.is_completed ? 'btn-warning' : 'btn-success'">
                       {{ task.is_completed ? 'REOPEN' : 'FINISHED' }}
                     </button>
+                    <button v-if="isMobile && !task.is_completed" @click="startEditing(task)"
+                      class="btn action-btn btn-info">
+                      EDIT
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -81,7 +85,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, computed } from 'vue'
 import { useTaskStore } from '@/stores/taskStore'
 import { useAuthStore } from '@/stores/authStore'
 
@@ -89,6 +93,8 @@ const taskStore = useTaskStore()
 const authStore = useAuthStore()
 const newTask = ref('')
 const editInput = ref(null)
+
+const isMobile = computed(() => window.innerWidth <= 768)
 
 const formatDate = (dateString) => {
   const date = new Date(dateString)
@@ -104,6 +110,22 @@ const fetchTasks = () => {
     taskStore.fetchTasks(authStore.token)
   }
 }
+
+const touchStartTime = ref(0)
+const touchTimer = ref(null)
+
+const handleTouchStart = (task) => {
+  if (task.is_completed) return
+  touchStartTime.value = Date.now()
+  touchTimer.value = setTimeout(() => {
+    startEditing(task)
+  }, 800)
+}
+
+const handleTouchEnd = () => {
+  clearTimeout(touchTimer.value)
+}
+
 // редактирование задачи (двойной клик)
 const startEditing = (task) => {
   if (task.is_completed) return;
@@ -146,6 +168,11 @@ const addTask = async () => {
     newTask.value = ''
   }
 }
+
+defineExpose({
+  handleTouchStart,
+  handleTouchEnd
+})
 </script>
 
 <style scoped>
@@ -177,6 +204,17 @@ const addTask = async () => {
   padding: 0.5em 0.75em;
 }
 
+.action-btn {
+  min-width: 80px;
+  padding: 0.375rem 0.5rem;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.btn-info {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .task-list {
     min-width: 100%;
@@ -204,6 +242,15 @@ const addTask = async () => {
     font-size: 0.875rem;
   }
 
+  .btn-info {
+    display: inline-block;
+  }
+
+  .action-btn {
+    min-width: 70px;
+    font-size: 0.75rem;
+  }
+
   .form-control-lg {
     font-size: 1rem;
     padding: 0.5rem 0.75rem;
@@ -211,22 +258,44 @@ const addTask = async () => {
 }
 
 @media (max-width: 576px) {
-  .d-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  .btn {
-    width: 100%;
-  }
-
-  .d-flex.gap-2 {
-    flex-direction: column;
-    gap: 0.5rem !important;
+  .table td,
+  .table th {
+    padding: 0.5rem;
+    font-size: 0.875rem;
   }
 
   .badge {
-    font-size: 0.75em;
-    padding: 0.25em 0.5em;
+    font-size: 0.7em;
+    padding: 0.2em 0.4em;
+    white-space: nowrap;
+  }
+
+  .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .action-btn {
+    min-width: 60px;
+    font-size: 0.65rem;
+  }
+
+  .d-flex.gap-2 {
+    flex-direction: row;
+    gap: 0.25rem !important;
+    flex-wrap: wrap;
+  }
+
+  .table-responsive {
+    max-height: calc(100vh - 250px);
+  }
+
+  .card-body {
+    padding: 0.75rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
   }
 }
 </style>

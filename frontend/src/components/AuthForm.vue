@@ -4,42 +4,20 @@
     <form @submit.prevent="handleSubmit">
       <div v-if="!isLogin" class="mb-3">
         <label for="name" class="form-label">Имя</label>
-        <input
-          v-model="form.name"
-          type="text"
-          class="form-control"
-          id="name"
-        />
+        <input v-model="form.name" type="text" class="form-control" id="name" />
       </div>
       <div class="mb-3">
         <label for="email" class="form-label">Email</label>
-        <input
-          v-model="form.email"
-          type="email"
-          class="form-control"
-          id="email"
-          required
-        />
+        <input v-model="form.email" type="email" class="form-control" id="email" required />
       </div>
       <div class="mb-3">
         <label for="password" class="form-label">Пароль</label>
-        <input
-          v-model="form.password"
-          type="password"
-          class="form-control"
-          id="password"
-          required
-        />
+        <input v-model="form.password" type="password" class="form-control" id="password" required />
       </div>
       <div v-if="!isLogin" class="mb-3">
         <label for="confirmPassword" class="form-label">Подтвердите пароль</label>
-        <input
-          v-model="form.password_confirmation"
-          type="password"
-          class="form-control"
-          id="confirmPassword"
-          required
-        />
+        <input v-model="form.password_confirmation" type="password" class="form-control" id="confirmPassword"
+          required />
       </div>
       <button type="submit" class="btn btn-primary w-100">
         {{ isLogin ? 'Войти' : 'Зарегистрироваться' }}
@@ -106,7 +84,7 @@ const handleSubmit = async () => {
       router.push('/')
     } else {
       error.value = result.error?.message ||
-                  (props.isLogin ? 'Ошибка входа' : 'Ошибка регистрации')
+        (props.isLogin ? 'Ошибка входа' : 'Ошибка регистрации')
     }
   } catch (err) {
     error.value = err.message || 'Произошла ошибка'
@@ -116,8 +94,16 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped>
+.auth-form {
+  width: 400px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
   .auth-form {
-    width: 400px;
-    max-width: 100%;
+    padding: 1rem 0;
+    width: 100%;
   }
+}
 </style>
