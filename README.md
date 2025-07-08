@@ -62,11 +62,12 @@ npm run dev
 
 Фронтенд доступен: [http://localhost:5173](http://localhost:5173/)
 
-### **2. Запуск через Docker**
+### 2. Развертывание приложения с помощью Docker
 
 #### **Требования**
 
-* Docker + Docker Compose
+- Установленный Docker Desktop (или Docker Engine + Docker Compose)
+- Git (для клонирования репозитория)
 
 #### **Инструкция**
 
@@ -82,36 +83,100 @@ npm run dev
 Создайте .env файл:
 
 ```
-cp backend/.env.example backend/.env
+copy backend\.env.example backend\.env
 ```
 
-**3. Запустите контейнеры**
+**3.  Редактирование конфигурации**
+
+Откройте файл backend/.env и настройте подключение к БД:
+
+```
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=todo
+DB_USERNAME=root
+DB_PASSWORD=root
+
+# Настройки JWT (значение JWT_SECRET будет сгенерировано позже)
+JWT_SECRET=
+JWT_TTL=1440
+```
+
+**4. Запуск и сборка контейнеров**
+
+Запустите Docker Desktop и запустите сборку:
 
 ```
 docker-compose up -d --build
 ```
 
-**4. Установите зависимости Laravel**
+**5. Установка зависимостей**:
 
 ```
-docker exec -it todo-app-php-1 composer install
+docker-compose run --rm backend composer install
+docker-compose run --rm frontend-dev npm install
 ```
 
-**5. **Настройте приложение****
-
-Сгенерируйте ключ:
+**6. Генерация ключей и настройка приложения:**
 
 ```
-docker exec -it todo-app-php-1 php artisan key:generate
+docker-compose exec backend php artisan key:generate
+docker-compose exec backend php artisan jwt:secret
 ```
 
-Запустите миграции:
+**7. **Настройка базы данных:****
 
 ```
-docker exec -it todo-app-php-1 php artisan migrate
+docker-compose exec backend php artisan migrate --seed
 ```
 
-**6. Доступ к приложению**
+**8. Перезапуск контейнеров (при необходимости)**
+
+```
+docker-compose down
+docker-compose up -d
+```
+
+**9. Доступ к приложению**
 
 * **Бэкенд** : [http://localhost](http://localhost/)
 * **Фронтенд** : [http://localhost:5173](http://localhost:5173/)
+
+## Команды управления
+
+Запуск контейнеров:
+
+```
+docker-compose up -d
+```
+
+Остановка контейнеров:
+
+```
+docker-compose down
+```
+
+Просмотр логов:
+
+```
+docker-compose logs -f [service_name]
+```
+
+Проверка контейнеров:
+
+```
+docker-compose ps
+```
+
+Пересборка контейнеров (после изменений в конфигурации):
+
+```
+docker-compose up -d --build
+```
+
+Перезапуск контейнера:
+
+```
+docker-compose restart [имя контейнера]
+```
