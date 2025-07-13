@@ -94,13 +94,11 @@ copy backend\.env.example backend\.env
 DB_CONNECTION=mysql
 DB_HOST=mysql
 DB_PORT=3306
-DB_DATABASE=todo
-DB_USERNAME=root
-DB_PASSWORD=root
+DB_DATABASE=todolist
+DB_USERNAME=laravel
+DB_PASSWORD=secret
 
 # Настройки JWT (значение JWT_SECRET будет сгенерировано позже)
-JWT_SECRET=
-JWT_TTL=1440
 ```
 
 **4. Запуск и сборка контейнеров**

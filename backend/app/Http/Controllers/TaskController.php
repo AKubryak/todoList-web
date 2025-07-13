@@ -9,9 +9,13 @@ use App\Models\Task;
 
 class TaskController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         $user = Auth::user();
-        return $user->tasks;
+        return Task::where('user_id', $user->id)
+            ->orderBy('is_completed')
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 
     public function store(Request $request)
